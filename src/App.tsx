@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
 import ChatButton from './components/ChatButton'
 import ChatWindow from './components/ChatWindow'
@@ -8,20 +8,6 @@ import Metrics from './pages/Metrics'
 import Report from './pages/Report'
 
 function Home() {
-  const [isChatOpen, setIsChatOpen] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsChatOpen(true)
-    }, 3000) // Open after 3 seconds
-
-    return () => clearTimeout(timer) // Cleanup on unmount
-  }, []) // Run only once on mount
-
-  const handleChatToggle = () => {
-    setIsChatOpen(!isChatOpen)
-  }
-
   return (
     <div className="app">
       <header className="app-header">
@@ -110,22 +96,55 @@ function Home() {
           <p>&copy; 2024 HRCare. All rights reserved.</p>
         </div>
       </footer>
-
-      <ChatButton onClick={handleChatToggle} isOpen={isChatOpen} />
-      <ChatWindow isOpen={isChatOpen} onClose={handleChatToggle} />
     </div>
   )
 }
 
-function App() {
+function AppContent() {
+  const [isChatOpen, setIsChatOpen] = useState(() => {
+    // Load chat open state from sessionStorage
+    // sessionStorage persists on page reload but clears when tab closes
+    const saved = sessionStorage.getItem('chatOpen')
+    return saved === 'true'
+  })
+  const location = useLocation()
+
+  useEffect(() => {
+    // Auto-open chat on home page after 3 seconds (only if not already opened)
+    if (location.pathname === '/' && !isChatOpen) {
+      const timer = setTimeout(() => {
+        setIsChatOpen(true)
+        sessionStorage.setItem('chatOpen', 'true')
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [location.pathname, isChatOpen])
+
+  const handleChatToggle = () => {
+    const newState = !isChatOpen
+    setIsChatOpen(newState)
+    sessionStorage.setItem('chatOpen', String(newState))
+  }
+
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/docs" element={<Docs />} />
         <Route path="/metrics" element={<Metrics />} />
         <Route path="/report" element={<Report />} />
       </Routes>
+      <ChatButton onClick={handleChatToggle} isOpen={isChatOpen} />
+      <ChatWindow isOpen={isChatOpen} onClose={handleChatToggle} />
+    </>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   )
 }

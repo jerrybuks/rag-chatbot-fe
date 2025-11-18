@@ -20,15 +20,35 @@ interface ChatWindowProps {
   onClose: () => void
 }
 
+const INITIAL_MESSAGE: Message = {
+  id: '1',
+  text: 'Hello! 👋 I\'m your HRCare RAG-powered assistant. I\'m designed to help answer questions based on HRCare\'s internal documentation using Retrieval-Augmented Generation (RAG) technology. Feel free to ask me anything about HRCare features, account management, SSO, billing, hiring, onboarding, and more!\n\nYou can also browse our full documentation: <a href="/docs" target="_blank" rel="noopener noreferrer">View Documentation</a>',
+  sender: 'bot',
+  timestamp: new Date()
+}
+
 function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! 👋 I\'m your HRCare RAG-powered assistant. I\'m designed to help answer questions based on HRCare\'s internal documentation using Retrieval-Augmented Generation (RAG) technology. Feel free to ask me anything about HRCare features, account management, SSO, billing, hiring, onboarding, and more!\n\nYou can also browse our full documentation: <a href="/docs" target="_blank" rel="noopener noreferrer">View Documentation</a>',
-      sender: 'bot',
-      timestamp: new Date()
+  // Load messages from sessionStorage or use initial message
+  // sessionStorage persists on page reload but clears when tab closes
+  const loadMessages = (): Message[] => {
+    try {
+      const saved = sessionStorage.getItem('chatMessages')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Convert timestamp strings back to Date objects and preserve contextData
+        return parsed.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+          contextData: msg.contextData || null
+        }))
+      }
+    } catch (e) {
+      console.error('Error loading messages:', e)
     }
-  ])
+    return [INITIAL_MESSAGE]
+  }
+
+  const [messages, setMessages] = useState<Message[]>(loadMessages)
   const [inputValue, setInputValue] = useState('')
   const [productArea, setProductArea] = useState<string>('')
   const [section, setSection] = useState<string>('')
@@ -46,6 +66,16 @@ function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     queryFn: () => evaluateQuery(selectedQueryId!),
     enabled: !!selectedQueryId && isEvaluationModalOpen,
   })
+
+  // Save messages to sessionStorage whenever they change
+  // sessionStorage persists on page reload but clears when tab closes
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('chatMessages', JSON.stringify(messages))
+    } catch (e) {
+      console.error('Error saving messages:', e)
+    }
+  }, [messages])
 
   const mutation = useMutation({
     mutationFn: queryAPI,
