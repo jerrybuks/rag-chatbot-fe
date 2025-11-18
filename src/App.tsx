@@ -8,6 +8,16 @@ import Metrics from './pages/Metrics'
 import Report from './pages/Report'
 
 function Home() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -16,10 +26,20 @@ function Home() {
             <div className="logo">
               <h1>HRCare</h1>
             </div>
-            <div className="nav-links">
-              <Link to="/docs">Documentation</Link>
-              <Link to="/metrics">Metrics</Link>
-              <Link to="/report">Report</Link>
+            <button 
+              className="mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+            <div className={`nav-links ${isMobileMenuOpen ? 'nav-links-open' : ''}`}>
+              <Link to="/docs" onClick={closeMobileMenu}>Documentation</Link>
+              <Link to="/metrics" onClick={closeMobileMenu}>Metrics</Link>
+              <Link to="/report" onClick={closeMobileMenu}>Report</Link>
             </div>
           </nav>
         </div>
@@ -93,7 +113,7 @@ function Home() {
 
       <footer className="app-footer">
         <div className="container">
-          <p>&copy; 2024 HRCare. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} HRCare. All rights reserved.</p>
         </div>
       </footer>
     </div>
@@ -110,14 +130,19 @@ function AppContent() {
   const location = useLocation()
 
   useEffect(() => {
-    // Auto-open chat on home page after 3 seconds (only if not already opened)
+    // Auto-open chat on home page after 3 seconds (only on first load ever)
     if (location.pathname === '/' && !isChatOpen) {
-      const timer = setTimeout(() => {
-        setIsChatOpen(true)
-        sessionStorage.setItem('chatOpen', 'true')
-      }, 3000)
+      // Check if this is the first load ever using localStorage
+      const hasOpenedBefore = localStorage.getItem('chatHasOpenedBefore')
+      if (!hasOpenedBefore) {
+        const timer = setTimeout(() => {
+          setIsChatOpen(true)
+          sessionStorage.setItem('chatOpen', 'true')
+          localStorage.setItem('chatHasOpenedBefore', 'true')
+        }, 3000)
 
-      return () => clearTimeout(timer)
+        return () => clearTimeout(timer)
+      }
     }
   }, [location.pathname, isChatOpen])
 

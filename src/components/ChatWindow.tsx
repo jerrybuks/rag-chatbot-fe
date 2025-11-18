@@ -22,7 +22,7 @@ interface ChatWindowProps {
 
 const INITIAL_MESSAGE: Message = {
   id: '1',
-  text: 'Hello! 👋 I\'m your HRCare RAG-powered assistant. I\'m designed to help answer questions based on HRCare\'s internal documentation using Retrieval-Augmented Generation (RAG) technology. Feel free to ask me anything about HRCare features, account management, SSO, billing, hiring, onboarding, and more!\n\nYou can also browse our full documentation: <a href="/docs" target="_blank" rel="noopener noreferrer">View Documentation</a>',
+  text: 'Hello! 👋 I\'m your HRCare RAG-powered assistant. I\'m designed to help answer questions based on HRCare\'s internal documentation using Retrieval-Augmented Generation (RAG) technology. Feel free to ask me anything about HRCare features, account management, SSO, billing, hiring, onboarding, and more!\n\nYou can also browse our full documentation: <a href="/docs">View Documentation</a>',
   sender: 'bot',
   timestamp: new Date()
 }
