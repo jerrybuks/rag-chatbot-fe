@@ -1,0 +1,168 @@
+.docs-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.docs-header {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.docs-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+}
+
+.docs-back-link {
+  color: #4c5fd8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.docs-back-link:hover {
+  color: #5a3d7a;
+}
+
+.docs-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #4c5fd8 0%, #5a3d7a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.docs-main {
+  padding: 48px 0;
+}
+
+.docs-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 18px;
+}
+
+.docs-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.docs-intro {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.docs-intro p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.doc-section {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.doc-section-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.doc-section-title {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+}
+
+.doc-section-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.doc-meta-item {
+  font-size: 13px;
+  color: #666;
+  background: #f5f5f5;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.doc-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.doc-tag {
+  font-size: 12px;
+  color: #4c5fd8;
+  background: rgba(76, 95, 216, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.doc-content {
+  line-height: 1.8;
+  color: #333;
+}
+
+.doc-content p {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+}
+
+.doc-content p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .docs-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .docs-title {
+    font-size: 24px;
+  }
+
+  .doc-section {
+    padding: 24px;
+  }
+
+  .doc-section-title {
+    font-size: 22px;
+  }
+
+  .doc-section-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
