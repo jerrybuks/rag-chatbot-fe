@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-do
 import './App.css'
 import ChatButton from './components/ChatButton'
 import ChatWindow from './components/ChatWindow'
+import ServerWakeUp from './components/ServerWakeUp'
 import Docs from './pages/Docs'
 import Metrics from './pages/Metrics'
 import Report from './pages/Report'
+import { checkHealth } from './services/api'
 
 function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -127,7 +129,58 @@ function AppContent() {
     const saved = sessionStorage.getItem('chatOpen')
     return saved === 'true'
   })
+  const [isServerReady, setIsServerReady] = useState(false)
   const location = useLocation()
+
+  // Health check on mount - quietly wake up the server
+  useEffect(() => {
+    let pollInterval: ReturnType<typeof setInterval> | null = null
+    let isMounted = true
+
+    const performHealthCheck = async () => {
+      if (!isMounted) return
+      
+      try {
+        const health = await checkHealth()
+        if (health && health.status === 'ok') {
+          setIsServerReady(true)
+          if (pollInterval) {
+            clearInterval(pollInterval)
+            pollInterval = null
+          }
+        }
+      } catch (error) {
+        // Silently handle errors - server might be sleeping
+      }
+    }
+
+    // Initial check
+    performHealthCheck()
+
+    // Poll every 3 seconds until server is ready
+    pollInterval = setInterval(() => {
+      performHealthCheck()
+    }, 3000)
+
+    return () => {
+      isMounted = false
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
+    }
+  }, [])
+
+  // Add/remove class to body for styling adjustments
+  useEffect(() => {
+    if (!isServerReady) {
+      document.body.classList.add('server-waking')
+    } else {
+      document.body.classList.remove('server-waking')
+    }
+    return () => {
+      document.body.classList.remove('server-waking')
+    }
+  }, [isServerReady])
 
   useEffect(() => {
     // Auto-open chat on home page after 3 seconds (only on first load ever)
@@ -154,6 +207,7 @@ function AppContent() {
 
   return (
     <>
+      {!isServerReady && <ServerWakeUp />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/docs" element={<Docs />} />
