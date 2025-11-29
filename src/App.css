@@ -20,6 +20,18 @@
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: top 0.3s ease;
+}
+
+/* Adjust header position when server wake-up banner is visible */
+body.server-waking .app-header {
+  top: 48px;
+}
+
+@media (max-width: 768px) {
+  body.server-waking .app-header {
+    top: 44px;
+  }
 }
 
 .navbar {
