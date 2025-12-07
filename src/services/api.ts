@@ -125,8 +125,9 @@ export async function checkHealth(): Promise<HealthResponse | null> {
       method: 'HEAD',
     })
 
-    if (response.ok && response.status === 200) {
+    if (response.ok) {
       // HEAD request returns no body, so we just check the status
+      // response.ok is true for all 2xx status codes (200-299)
       return { status: 'ok' }
     }
     return null
