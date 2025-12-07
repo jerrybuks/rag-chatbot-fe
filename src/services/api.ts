@@ -122,21 +122,16 @@ export interface HealthResponse {
 export async function checkHealth(): Promise<HealthResponse | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/health`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method: 'HEAD',
     })
 
     if (response.ok) {
-      const data = await response.json()
-      if (data.status === 'ok') {
-        return data
-      }
+      // HEAD request returns no body, so we just check the status
+      // response.ok is true for all 2xx status codes (200-299)
+      return { status: 'ok' }
     }
     return null
   } catch (error) {
-    // Silently fail - server might be sleeping
     return null
   }
 }
